@@ -51,6 +51,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private bool invertY = true;
 
+    [Header("Animation")] [SerializeField] private Animator anim;
+
     #endregion
     
     #region Private Variables
@@ -68,6 +70,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 cameraRotation;
     
     private Vector3 lastMovement;
+
+    private bool isMoving;
     #endregion
     
     #region Event Functions
@@ -95,6 +99,7 @@ public class PlayerController : MonoBehaviour
 
         Rotate(moveInput);
         Move(moveInput);
+        Animate();
     }
 
     private void LateUpdate()
@@ -146,6 +151,8 @@ public class PlayerController : MonoBehaviour
     
     private void Move(Vector2 moveInput)
     {
+        isMoving = moveInput != Vector2.zero;
+        
         float targetSpeed = moveInput == Vector2.zero ? 0 : movementSpeed * moveInput.magnitude;
         Vector3 currentVelocity = lastMovement;
         currentVelocity.y = 0;
@@ -175,6 +182,11 @@ public class PlayerController : MonoBehaviour
         }
         
         lastMovement = movement;
+    }
+
+    private void Animate()
+    {
+        anim.SetBool("isMoving", isMoving);
     }
 
     #endregion
