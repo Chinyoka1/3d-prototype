@@ -96,7 +96,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        isGrounded = characterController.isGrounded;
         ReadInput();
 
         Rotate(moveInput);
@@ -175,10 +174,15 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(transform.position + Vector3.up * 0.01f, Vector3.down,
                 out RaycastHit hit, raycastLength, raycastMask, QueryTriggerInteraction.Ignore))
         {
+            isGrounded = true;
             if (Vector3.ProjectOnPlane(movement, hit.normal).y < 0)
             {
                 characterController.Move(Vector3.down * (pullDownForce * Time.deltaTime));
             }
+        }
+        else
+        {
+            isGrounded = false;
         }
         
         lastMovement = movement;
