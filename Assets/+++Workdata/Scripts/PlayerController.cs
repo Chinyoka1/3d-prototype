@@ -71,7 +71,8 @@ public class PlayerController : MonoBehaviour
     
     private Vector3 lastMovement;
 
-    private bool isMoving;
+    private float currentSpeed;
+    private bool isGrounded = true;
     #endregion
     
     #region Event Functions
@@ -95,6 +96,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        isGrounded = characterController.isGrounded;
         ReadInput();
 
         Rotate(moveInput);
@@ -151,12 +153,10 @@ public class PlayerController : MonoBehaviour
     
     private void Move(Vector2 moveInput)
     {
-        isMoving = moveInput != Vector2.zero;
-        
         float targetSpeed = moveInput == Vector2.zero ? 0 : movementSpeed * moveInput.magnitude;
         Vector3 currentVelocity = lastMovement;
         currentVelocity.y = 0;
-        float currentSpeed = currentVelocity.magnitude;
+        currentSpeed = currentVelocity.magnitude;
 
         if (Mathf.Abs(currentSpeed - targetSpeed) > 0.01f)
         {
@@ -186,7 +186,8 @@ public class PlayerController : MonoBehaviour
 
     private void Animate()
     {
-        anim.SetBool("isMoving", isMoving);
+        anim.SetFloat("MovementSpeed", currentSpeed);
+        anim.SetBool("Grounded", isGrounded);
     }
 
     #endregion
