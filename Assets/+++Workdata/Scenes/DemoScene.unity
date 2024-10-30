@@ -836,7 +836,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damping: {x: 0.1, y: 0.5, z: 0.3}
-  ShoulderOffset: {x: 0, y: 0, z: 0}
+  ShoulderOffset: {x: 0, y: -0.3, z: 0}
   VerticalArmLength: 0.4
   CameraSide: 1
   CameraDistance: 3
@@ -1603,7 +1603,7 @@ Transform:
   m_GameObject: {fileID: 1629643214}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.73065, y: 2.4025807, z: 14.62781}
+  m_LocalPosition: {x: 16.73065, y: 2.1025808, z: 14.62781}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1735,7 +1735,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4fef40584fbc4a478c83e244edd7318, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 5
+  runSpeed: 5
+  walkSpeed: 3
+  crouchSpeed: 2
   speedChangeRate: 10
   rotationSpeed: 10
   pullDownForce: 5
@@ -1752,6 +1754,7 @@ MonoBehaviour:
   controllerCameraSensitivity: 1
   invertY: 1
   anim: {fileID: 83704673}
+  coyoteTime: 0.2
 --- !u!143 &1673431855
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1776,7 +1779,7 @@ CharacterController:
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1 &1711452509
 GameObject:
@@ -1804,7 +1807,7 @@ Transform:
   m_GameObject: {fileID: 1711452509}
   serializedVersion: 2
   m_LocalRotation: {x: 0.03614877, y: 0.9636582, z: -0.17715903, w: 0.1966489}
-  m_LocalPosition: {x: 0, y: 2.025, z: -3}
+  m_LocalPosition: {x: 0, y: 1.7250001, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

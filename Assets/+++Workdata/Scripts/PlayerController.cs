@@ -14,7 +14,9 @@ public class PlayerController : MonoBehaviour
     
     [Min(0)]
     [Tooltip("The maximum speed of the player in uu/s")]
-    [SerializeField] private float movementSpeed = 5f;
+    [SerializeField] private float runSpeed = 5f;
+    [SerializeField] private float walkSpeed = 3f;
+    [SerializeField] private float crouchSpeed = 2f;
 
     [Min(0)]
     [Tooltip("How fast the movement speed is in-/decreasing")]
@@ -51,16 +53,26 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private bool invertY = true;
 
-    [Header("Animation")] [SerializeField] private Animator anim;
+    [Header("Animation")] 
+    [SerializeField] private Animator anim;
+
+    [SerializeField] private float coyoteTime;
 
     #endregion
     
     #region Private Variables
+
+    private static readonly int Hash_MovementSpeed = Animator.StringToHash("MovementSpeed");
+    private static readonly int Hash_Grounded = Animator.StringToHash("Grounded");
+    private static readonly int Hash_Crouching = Animator.StringToHash("Crouching");
+    
     private CharacterController characterController;
     
     private Player_InputActions inputActions;
     private InputAction moveAction;
     private InputAction lookAction;
+    private InputAction runAction;
+    private InputAction crouchAction;
     
     private Vector2 moveInput;
     private Vector2 lookInput;
@@ -71,8 +83,11 @@ public class PlayerController : MonoBehaviour
     
     private Vector3 lastMovement;
 
+    private float movementSpeed;
     private float currentSpeed;
     private bool isGrounded = true;
+    private float airTime;
+    private bool isCrouching;
     #endregion
     
     #region Event Functions
@@ -83,15 +98,22 @@ public class PlayerController : MonoBehaviour
         inputActions = new Player_InputActions();
         moveAction = inputActions.Player.Move;
         lookAction = inputActions.Player.Look;
+        runAction = inputActions.Player.Run;
+        crouchAction = inputActions.Player.Crouch;
 
         characterTargetRotation = transform.rotation;
         cameraRotation = cameraTarget.rotation.eulerAngles;
+        movementSpeed = walkSpeed;
 
     }
 
     private void OnEnable()
     {
         inputActions.Enable();
+        runAction.performed += Run;
+        runAction.canceled += Run;
+        crouchAction.performed += Crouch;
+        crouchAction.canceled += Crouch;
     }
 
     private void Update()
@@ -100,6 +122,7 @@ public class PlayerController : MonoBehaviour
 
         Rotate(moveInput);
         Move(moveInput);
+        GroundCheck();
         Animate();
     }
 
@@ -111,6 +134,10 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         inputActions.Disable();
+        runAction.performed -= Run;
+        runAction.canceled -= Run;
+        crouchAction.performed -= Crouch;
+        crouchAction.canceled -= Crouch;
     }
     
     #endregion
@@ -122,7 +149,34 @@ public class PlayerController : MonoBehaviour
         moveInput = moveAction.ReadValue<Vector2>();
         lookInput = lookAction.ReadValue<Vector2>();
     }
+    
+    private void Run(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            movementSpeed = runSpeed;
+        }
 
+        if (context.canceled)
+        {
+            movementSpeed = walkSpeed;
+        }
+    }
+
+    private void Crouch(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            isCrouching = true;
+            movementSpeed = crouchSpeed;
+        }
+
+        if (context.canceled)
+        {
+            isCrouching = false;
+            movementSpeed = walkSpeed;
+        }
+    }
     #endregion
     
     #region Movement
@@ -174,28 +228,51 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(transform.position + Vector3.up * 0.01f, Vector3.down,
                 out RaycastHit hit, raycastLength, raycastMask, QueryTriggerInteraction.Ignore))
         {
-            isGrounded = true;
+            //isGrounded = true;
             if (Vector3.ProjectOnPlane(movement, hit.normal).y < 0)
             {
                 characterController.Move(Vector3.down * (pullDownForce * Time.deltaTime));
             }
         }
-        else
-        {
-            isGrounded = false;
-        }
+        //else
+        //{
+        //    isGrounded = false;
+        //}
         
         lastMovement = movement;
     }
+    
+    #endregion
 
+    #region Animation
+    
     private void Animate()
     {
-        anim.SetFloat("MovementSpeed", currentSpeed);
-        anim.SetBool("Grounded", isGrounded);
+        anim.SetFloat(Hash_MovementSpeed, currentSpeed);
+        anim.SetBool(Hash_Grounded, isGrounded);
+        anim.SetBool(Hash_Crouching, isCrouching);
     }
 
     #endregion
 
+    #region GroundCheck
+
+    private void GroundCheck()
+    {
+        if (characterController.isGrounded)
+        {
+            airTime = 0;
+        }
+        else
+        {
+            airTime += Time.deltaTime;
+        }
+
+        isGrounded = airTime < coyoteTime;
+    }
+
+    #endregion
+    
     #region Camera
 
     private void RotateCamera(Vector2 lookInput)
