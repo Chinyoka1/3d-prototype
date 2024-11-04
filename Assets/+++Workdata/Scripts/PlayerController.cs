@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float runSpeed = 5f;
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float crouchSpeed = 2f;
+    [SerializeField] private float jumpHeight = 0.5f;
 
     [Min(0)]
     [Tooltip("How fast the movement speed is in-/decreasing")]
@@ -65,6 +66,8 @@ public class PlayerController : MonoBehaviour
     private static readonly int Hash_MovementSpeed = Animator.StringToHash("MovementSpeed");
     private static readonly int Hash_Grounded = Animator.StringToHash("Grounded");
     private static readonly int Hash_Crouching = Animator.StringToHash("Crouching");
+    private static readonly int Hash_Jump = Animator.StringToHash("Jump");
+    private static readonly int Hash_Attack = Animator.StringToHash("Attack");
     
     private CharacterController characterController;
     
@@ -73,6 +76,8 @@ public class PlayerController : MonoBehaviour
     private InputAction lookAction;
     private InputAction runAction;
     private InputAction crouchAction;
+    private InputAction jumpAction;
+    private InputAction attackAction;
     
     private Vector2 moveInput;
     private Vector2 lookInput;
@@ -88,6 +93,9 @@ public class PlayerController : MonoBehaviour
     private bool isGrounded = true;
     private float airTime;
     private bool isCrouching;
+
+    private float gravity = -19.62f;
+    private Vector3 velocity;
     #endregion
     
     #region Event Functions
@@ -100,6 +108,8 @@ public class PlayerController : MonoBehaviour
         lookAction = inputActions.Player.Look;
         runAction = inputActions.Player.Run;
         crouchAction = inputActions.Player.Crouch;
+        jumpAction = inputActions.Player.Jump;
+        attackAction = inputActions.Player.Attack;
 
         characterTargetRotation = transform.rotation;
         cameraRotation = cameraTarget.rotation.eulerAngles;
@@ -114,6 +124,8 @@ public class PlayerController : MonoBehaviour
         runAction.canceled += Run;
         crouchAction.performed += Crouch;
         crouchAction.canceled += Crouch;
+        jumpAction.performed += Jump;
+        attackAction.performed += Attack;
     }
 
     private void Update()
@@ -138,6 +150,8 @@ public class PlayerController : MonoBehaviour
         runAction.canceled -= Run;
         crouchAction.performed -= Crouch;
         crouchAction.canceled -= Crouch;
+        jumpAction.performed -= Jump;
+        attackAction.performed -= Attack;
     }
     
     #endregion
@@ -176,6 +190,22 @@ public class PlayerController : MonoBehaviour
             isCrouching = false;
             movementSpeed = walkSpeed;
         }
+        
+        AdjustHeight();
+    }
+
+    private void Jump(InputAction.CallbackContext context)
+    {
+        if (isGrounded)
+        {
+            anim.SetTrigger(Hash_Jump);
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+    }
+
+    private void Attack(InputAction.CallbackContext context)
+    {
+        anim.SetTrigger(Hash_Attack);
     }
     #endregion
     
@@ -223,21 +253,24 @@ public class PlayerController : MonoBehaviour
         Vector3 targetDirection = characterTargetRotation * Vector3.forward;
         
         Vector3 movement = targetDirection * currentSpeed;
-        characterController.SimpleMove(movement);
+
+        if (!isGrounded)
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
+
+        movement.y = velocity.y;
+
+        characterController.Move(movement * Time.deltaTime);
 
         if (Physics.Raycast(transform.position + Vector3.up * 0.01f, Vector3.down,
                 out RaycastHit hit, raycastLength, raycastMask, QueryTriggerInteraction.Ignore))
         {
-            //isGrounded = true;
             if (Vector3.ProjectOnPlane(movement, hit.normal).y < 0)
             {
                 characterController.Move(Vector3.down * (pullDownForce * Time.deltaTime));
             }
         }
-        //else
-        //{
-        //    isGrounded = false;
-        //}
         
         lastMovement = movement;
     }
@@ -269,6 +302,24 @@ public class PlayerController : MonoBehaviour
         }
 
         isGrounded = airTime < coyoteTime;
+    }
+
+    #endregion
+
+    #region Collider Height
+
+    private void AdjustHeight()
+    {
+        if (isCrouching)
+        {
+            characterController.height = 0.9f;
+            characterController.center = new Vector3(0, 0.45f, 0);
+        }
+        else
+        {
+            characterController.height = 1.8f;
+            characterController.center = new Vector3(0, 0.9f, 0);
+        }
     }
 
     #endregion

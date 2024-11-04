@@ -1495,6 +1495,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8434589221339364836, guid: 64b182395c0b6744a920c74bce3ece13,
+        type: 3}
+      propertyPath: m_Name
+      value: Rio Animator
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1738,6 +1743,7 @@ MonoBehaviour:
   runSpeed: 5
   walkSpeed: 3
   crouchSpeed: 2
+  jumpHeight: 0.5
   speedChangeRate: 10
   rotationSpeed: 10
   pullDownForce: 5
@@ -1755,6 +1761,7 @@ MonoBehaviour:
   invertY: 1
   anim: {fileID: 83704673}
   coyoteTime: 0.2
+  isJumping: 0
 --- !u!143 &1673431855
 CharacterController:
   m_ObjectHideFlags: 0
