@@ -67,17 +67,20 @@ public class PlayerController : MonoBehaviour
     private static readonly int Hash_Grounded = Animator.StringToHash("Grounded");
     private static readonly int Hash_Crouching = Animator.StringToHash("Crouching");
     private static readonly int Hash_Jump = Animator.StringToHash("Jump");
-    private static readonly int Hash_Attack = Animator.StringToHash("Attack");
+    private static readonly int Hash_ActionId = Animator.StringToHash("ActionId");
+    private static readonly int Hash_ActionTrigger = Animator.StringToHash("ActionTrigger");
+
+    public static Action EnableAbilities;
+    public static Action DisableAbilities;
     
     private CharacterController characterController;
     
-    private Player_InputActions inputActions;
+    public Player_InputActions inputActions;
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction runAction;
     private InputAction crouchAction;
     private InputAction jumpAction;
-    private InputAction attackAction;
     
     private Vector2 moveInput;
     private Vector2 lookInput;
@@ -96,6 +99,8 @@ public class PlayerController : MonoBehaviour
 
     private float gravity = -19.62f;
     private Vector3 velocity;
+
+    private int upperBody_AnimLayer;
     #endregion
     
     #region Event Functions
@@ -109,12 +114,12 @@ public class PlayerController : MonoBehaviour
         runAction = inputActions.Player.Run;
         crouchAction = inputActions.Player.Crouch;
         jumpAction = inputActions.Player.Jump;
-        attackAction = inputActions.Player.Attack;
 
         characterTargetRotation = transform.rotation;
         cameraRotation = cameraTarget.rotation.eulerAngles;
         movementSpeed = walkSpeed;
 
+        upperBody_AnimLayer = anim.GetLayerIndex("Upper Body");
     }
 
     private void OnEnable()
@@ -125,7 +130,8 @@ public class PlayerController : MonoBehaviour
         crouchAction.performed += Crouch;
         crouchAction.canceled += Crouch;
         jumpAction.performed += Jump;
-        attackAction.performed += Attack;
+        
+        EnableAbilities?.Invoke();
     }
 
     private void Update()
@@ -151,7 +157,8 @@ public class PlayerController : MonoBehaviour
         crouchAction.performed -= Crouch;
         crouchAction.canceled -= Crouch;
         jumpAction.performed -= Jump;
-        attackAction.performed -= Attack;
+        
+        DisableAbilities?.Invoke();
     }
     
     #endregion
@@ -201,11 +208,6 @@ public class PlayerController : MonoBehaviour
             anim.SetTrigger(Hash_Jump);
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
-    }
-
-    private void Attack(InputAction.CallbackContext context)
-    {
-        anim.SetTrigger(Hash_Attack);
     }
     #endregion
     
@@ -284,6 +286,17 @@ public class PlayerController : MonoBehaviour
         anim.SetFloat(Hash_MovementSpeed, currentSpeed);
         anim.SetBool(Hash_Grounded, isGrounded);
         anim.SetBool(Hash_Crouching, isCrouching);
+    }
+
+    public void ActionTrigger(int id)
+    {
+        anim.SetTrigger(Hash_ActionId);
+        anim.SetInteger(Hash_ActionTrigger, id);
+    }
+
+    public void SetAnimator_UpperBody_LayerWeight(float weight)
+    {
+        anim.SetLayerWeight(upperBody_AnimLayer, weight);
     }
 
     #endregion
