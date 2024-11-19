@@ -81,6 +81,7 @@ public class PlayerController : MonoBehaviour
     private InputAction runAction;
     private InputAction crouchAction;
     private InputAction jumpAction;
+    private InputAction interactAction;
     
     private Vector2 moveInput;
     private Vector2 lookInput;
@@ -101,6 +102,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
 
     private int upperBody_AnimLayer;
+
+    private Interactable selectedInteractable;
     #endregion
     
     #region Event Functions
@@ -114,6 +117,7 @@ public class PlayerController : MonoBehaviour
         runAction = inputActions.Player.Run;
         crouchAction = inputActions.Player.Crouch;
         jumpAction = inputActions.Player.Jump;
+        interactAction = inputActions.Player.Interact;
 
         characterTargetRotation = transform.rotation;
         cameraRotation = cameraTarget.rotation.eulerAngles;
@@ -130,6 +134,7 @@ public class PlayerController : MonoBehaviour
         crouchAction.performed += Crouch;
         crouchAction.canceled += Crouch;
         jumpAction.performed += Jump;
+        interactAction.performed += Interact;
         
         EnableAbilities?.Invoke();
     }
@@ -157,6 +162,7 @@ public class PlayerController : MonoBehaviour
         crouchAction.performed -= Crouch;
         crouchAction.canceled -= Crouch;
         jumpAction.performed -= Jump;
+        interactAction.performed -= Interact;
         
         DisableAbilities?.Invoke();
     }
@@ -399,6 +405,60 @@ public class PlayerController : MonoBehaviour
         }
 
         return lookAction.activeControl.device.name == "Mouse";
+    }
+
+    #endregion
+
+    #region Physics
+
+    private void OnTriggerEnter(Collider other)
+    {
+        TrySelectInteractable(other);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        TryDeselectInteractable(other);
+    }
+
+    #endregion
+
+    #region Interactions
+
+    private void Interact(InputAction.CallbackContext context)
+    {
+        if (selectedInteractable != null)
+        {
+            selectedInteractable.Interact();
+        }
+    }
+
+    private void TrySelectInteractable(Collider col)
+    {
+        Interactable interactable = col.GetComponent<Interactable>();
+        
+        if (interactable == null) return;
+
+        if (selectedInteractable != null)
+        {
+            selectedInteractable.Deselect();
+        }
+
+        selectedInteractable = interactable;
+        selectedInteractable.Select();
+    }
+
+    private void TryDeselectInteractable(Collider col)
+    {
+        Interactable interactable = col.GetComponent<Interactable>();
+        
+        if (interactable == null) return;
+
+        if (interactable == selectedInteractable)
+        {
+            selectedInteractable.Deselect();
+            selectedInteractable = null;
+        }
     }
 
     #endregion
