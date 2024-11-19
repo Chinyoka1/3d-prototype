@@ -2125,7 +2125,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.1
   m_Center: {x: 0, y: 0.09, z: 0}
@@ -2389,6 +2389,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9328b5e5dadd184092496a65642be1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  leftHandCollider: {fileID: 0}
+  leftFootCollider: {fileID: 0}
+  rightHandCollider: {fileID: 1779418168}
+  rightFootCollider: {fileID: 0}
 --- !u!1001 &2066776997
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -18,19 +18,12 @@ public class PlayerAttackAbility : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerController.EnableAbilities += EnableAbility;
-        PlayerController.DisableAbilities += DisableAbility;
+        StartCoroutine(DelayAbility());
     }
     
     private void OnDisable()
     {
-        PlayerController.EnableAbilities -= EnableAbility;
-        PlayerController.DisableAbilities -= DisableAbility;
-    }
-
-    public void EnableAbility()
-    {
-        StartCoroutine(DelayAbility());
+        attackAction.performed -= AttackInput;
     }
 
     IEnumerator DelayAbility()
@@ -38,11 +31,6 @@ public class PlayerAttackAbility : MonoBehaviour
         yield return null;
         attackAction = _playerController.inputActions.Player.Attack;
         attackAction.performed += AttackInput;
-    }
-
-    public void DisableAbility()
-    {
-        attackAction.performed -= AttackInput;
     }
 
     private void AttackInput(InputAction.CallbackContext ctx)
