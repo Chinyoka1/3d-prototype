@@ -69,13 +69,10 @@ public class PlayerController : MonoBehaviour
     private static readonly int Hash_Jump = Animator.StringToHash("Jump");
     private static readonly int Hash_ActionId = Animator.StringToHash("ActionId");
     private static readonly int Hash_ActionTrigger = Animator.StringToHash("ActionTrigger");
-
-    public static Action EnableAbilities;
-    public static Action DisableAbilities;
     
     private CharacterController characterController;
     
-    public Player_InputActions inputActions;
+    
     private InputAction moveAction;
     private InputAction lookAction;
     private InputAction runAction;
@@ -104,12 +101,26 @@ public class PlayerController : MonoBehaviour
     private int upperBody_AnimLayer;
 
     private Interactable selectedInteractable;
+
+    private UIManager uiManager;
+    #endregion
+
+    #region Public Variables
+
+    public Damageable damageable;
+    
+    public Player_InputActions inputActions;
+    
+    public static Action EnableAbilities;
+    public static Action DisableAbilities;
+
     #endregion
     
     #region Event Functions
     private void Awake()
     {
         characterController = GetComponent<CharacterController>();
+        uiManager = FindObjectOfType<UIManager>(true);
         
         inputActions = new Player_InputActions();
         moveAction = inputActions.Player.Move;
@@ -135,6 +146,8 @@ public class PlayerController : MonoBehaviour
         crouchAction.canceled += Crouch;
         jumpAction.performed += Jump;
         interactAction.performed += Interact;
+
+        uiManager.gameObject.SetActive(true);
         
         EnableAbilities?.Invoke();
     }
@@ -214,6 +227,16 @@ public class PlayerController : MonoBehaviour
             anim.SetTrigger(Hash_Jump);
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
+    }
+
+    public void EnableInput()
+    {
+        inputActions.Player.Enable();
+    }
+    
+    public void DisableInput()
+    {
+        inputActions.Player.Disable();
     }
     #endregion
     

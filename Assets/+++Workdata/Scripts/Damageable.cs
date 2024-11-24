@@ -8,7 +8,7 @@ public class Damageable : MonoBehaviour
     private static readonly int Hash_Hit = Animator.StringToHash("Hit");
     private static readonly int Hash_Death = Animator.StringToHash("Death");
 
-    [SerializeField] private int maxHealth = 100;
+    public int maxHealth = 100;
     [SerializeField] private int health = 100;
 
     private Animator anim;
