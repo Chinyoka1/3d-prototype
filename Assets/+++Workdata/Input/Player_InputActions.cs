@@ -91,6 +91,15 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sheathe"",
+                    ""type"": ""Button"",
+                    ""id"": ""bd051e83-c9cd-4861-97f9-201ebd64b877"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -366,6 +375,17 @@ namespace UnityEngine.InputSystem
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""71214bcc-93ed-4529-9392-fcf62de1e8e1"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Sheathe"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1011,6 +1031,7 @@ namespace UnityEngine.InputSystem
             m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
             m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
             m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+            m_Player_Sheathe = m_Player.FindAction("Sheathe", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1093,6 +1114,7 @@ namespace UnityEngine.InputSystem
         private readonly InputAction m_Player_Crouch;
         private readonly InputAction m_Player_Jump;
         private readonly InputAction m_Player_Interact;
+        private readonly InputAction m_Player_Sheathe;
         public struct PlayerActions
         {
             private @Player_InputActions m_Wrapper;
@@ -1104,6 +1126,7 @@ namespace UnityEngine.InputSystem
             public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
             public InputAction @Jump => m_Wrapper.m_Player_Jump;
             public InputAction @Interact => m_Wrapper.m_Player_Interact;
+            public InputAction @Sheathe => m_Wrapper.m_Player_Sheathe;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1134,6 +1157,9 @@ namespace UnityEngine.InputSystem
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Sheathe.started += instance.OnSheathe;
+                @Sheathe.performed += instance.OnSheathe;
+                @Sheathe.canceled += instance.OnSheathe;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -1159,6 +1185,9 @@ namespace UnityEngine.InputSystem
                 @Interact.started -= instance.OnInteract;
                 @Interact.performed -= instance.OnInteract;
                 @Interact.canceled -= instance.OnInteract;
+                @Sheathe.started -= instance.OnSheathe;
+                @Sheathe.performed -= instance.OnSheathe;
+                @Sheathe.canceled -= instance.OnSheathe;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1364,6 +1393,7 @@ namespace UnityEngine.InputSystem
             void OnCrouch(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
+            void OnSheathe(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

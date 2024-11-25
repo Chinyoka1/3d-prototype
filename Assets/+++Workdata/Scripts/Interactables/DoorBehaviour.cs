@@ -33,6 +33,11 @@ public class DoorBehaviour : MonoBehaviour
         if (doorMovementSound)
             audioSource.PlayOneShot(doorMovementSound);
         anim.Play("OpenDoor");
+        
+        foreach (Collider collider in colliders)
+        {
+            collider.enabled = false;
+        }
     }
     
     IEnumerator InitiateCloseDoor()
@@ -43,5 +48,10 @@ public class DoorBehaviour : MonoBehaviour
         yield return new WaitForSeconds(delayTimeClose);
         if (doorCloseSound)
             audioSource.PlayOneShot(doorCloseSound);
+        
+        foreach (Collider collider in colliders)
+        {
+            collider.enabled = true;
+        }
     }
 }

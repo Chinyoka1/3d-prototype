@@ -69,6 +69,9 @@ public class PlayerController : MonoBehaviour
     private static readonly int Hash_Jump = Animator.StringToHash("Jump");
     private static readonly int Hash_ActionId = Animator.StringToHash("ActionId");
     private static readonly int Hash_ActionTrigger = Animator.StringToHash("ActionTrigger");
+    private static readonly int Hash_WeaponId = Animator.StringToHash("WeaponId");
+    private static readonly int Hash_UnsheatheWeapon = Animator.StringToHash("UnsheatheWeapon");
+    private static readonly int Hash_SheatheWeapon = Animator.StringToHash("SheatheWeapon");
     
     private CharacterController characterController;
     
@@ -319,8 +322,20 @@ public class PlayerController : MonoBehaviour
 
     public void ActionTrigger(int id)
     {
-        anim.SetTrigger(Hash_ActionId);
-        anim.SetInteger(Hash_ActionTrigger, id);
+        anim.SetTrigger(Hash_ActionTrigger);
+        anim.SetInteger(Hash_ActionId, id);
+    }
+    
+    public void UnsheatheWeaponAnimation(int id)
+    {
+        anim.SetInteger(Hash_WeaponId, id);
+        anim.SetTrigger(Hash_UnsheatheWeapon);
+    }
+    
+    public void SheatheWeaponAnimation(int id)
+    {
+        anim.SetInteger(Hash_WeaponId, id);
+        anim.SetTrigger(Hash_SheatheWeapon);
     }
 
     public void SetAnimator_UpperBody_LayerWeight(float weight)
