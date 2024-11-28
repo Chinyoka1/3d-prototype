@@ -17,6 +17,7 @@ public class Damageable : MonoBehaviour
     private Animator anim;
 
     public UnityEvent<int> onHealthChanged;
+    public UnityEvent onDeath;
 
     private bool isDying;
 
@@ -38,25 +39,9 @@ public class Damageable : MonoBehaviour
 
             if (attack != null)
             {
-                TakeDamage(attack);
+                TakeDamage(attack.GetFlatDamage());
             }
         }
-    }
-
-    private void TakeDamage(Attack attack)
-    {
-        if (health > 0)
-        {
-            health -= attack.GetFlatDamage();
-        }
-        
-        if (health <= 0)
-        {
-            OnDeath();
-        }
-
-        PlayAnimation();
-        onHealthChanged.Invoke(health);
     }
 
     public void TakeDamage(int damagePoints)
@@ -70,8 +55,11 @@ public class Damageable : MonoBehaviour
         {
             OnDeath();
         }
+        else if (!isDying)
+        {
+            PlayAnimation();
+        }
 
-        PlayAnimation();
         onHealthChanged.Invoke(health);
     }
 
@@ -96,8 +84,10 @@ public class Damageable : MonoBehaviour
     {
         if (!isDying)
         {
+            onDeath.Invoke();
             anim.SetTrigger(Hash_Death);
         }
         isDying = true;
+        anim.SetBool("isDying", true);
     }
 }

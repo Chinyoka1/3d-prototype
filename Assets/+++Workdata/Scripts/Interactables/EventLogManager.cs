@@ -26,9 +26,9 @@ public class EventLogManager : MonoBehaviour
 
     IEnumerator InitiateEventLog()
     {
-        anim.Play("FadeIn");
+        anim.Play("Text_Fade_In");
         yield return new WaitForSeconds(visibleTime);
-        anim.Play("FadeOut");
+        anim.Play("Text_Fade_Out");
         yield return new WaitForSeconds(1);
         _coroutine = null;
     }

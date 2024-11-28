@@ -5,7 +5,14 @@ using UnityEngine;
 
 public class PlayerAnimationBehavior : MonoBehaviour
 {
-    [SerializeField] private Collider leftHandCollider, leftFootCollider, rightHandCollider, rightFootCollider, swordCollider;
+    [SerializeField] private Collider leftHandCollider,
+        leftFootCollider,
+        rightHandCollider,
+        rightFootCollider,
+        swordAttack1Collider,
+        swordAttack2Collider,
+        swordAttack3Collider;
+
     private PlayerController _playerController;
     private Animator anim;
 
@@ -24,7 +31,7 @@ public class PlayerAnimationBehavior : MonoBehaviour
     {
         rightHandCollider.enabled = true;
     }
-    
+
     public void DeactivateRightHandCollider()
     {
         rightHandCollider.enabled = false;
@@ -32,11 +39,34 @@ public class PlayerAnimationBehavior : MonoBehaviour
 
     public void ActivateSwordCollider()
     {
-        swordCollider.enabled = true;
+        swordAttack1Collider.enabled = true;
     }
-    
+
     public void DeactivateSwordCollider()
     {
-        swordCollider.enabled = false;
+        swordAttack1Collider.enabled = false;
+    }
+    public void ActivateSwordCollider2()
+    {
+        swordAttack2Collider.enabled = true;
+    }
+
+    public void DeactivateSwordCollider2()
+    {
+        swordAttack2Collider.enabled = false;
+    }
+    public void ActivateSwordCollider3()
+    {
+        swordAttack3Collider.enabled = true;
+    }
+
+    public void DeactivateSwordCollider3()
+    {
+        swordAttack3Collider.enabled = false;
+    }
+
+    public void Death()
+    {
+        FindObjectOfType<UIManager>().EnableDeathScreen();
     }
 }

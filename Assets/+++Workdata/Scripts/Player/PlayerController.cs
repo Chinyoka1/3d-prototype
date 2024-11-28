@@ -150,6 +150,8 @@ public class PlayerController : MonoBehaviour
         crouchAction.canceled += Crouch;
         jumpAction.performed += Jump;
         interactAction.performed += Interact;
+        
+        damageable.onDeath.AddListener(OnDeath);
 
         uiManager.gameObject.SetActive(true);
         
@@ -180,6 +182,8 @@ public class PlayerController : MonoBehaviour
         crouchAction.canceled -= Crouch;
         jumpAction.performed -= Jump;
         interactAction.performed -= Interact;
+        
+        damageable.onDeath.RemoveListener(OnDeath);
         
         DisableAbilities?.Invoke();
     }
@@ -504,6 +508,17 @@ public class PlayerController : MonoBehaviour
         {
             selectedInteractables.RemoveAt(0);
         }
+    }
+
+    #endregion
+
+    #region Player Events
+
+    private void OnDeath()
+    {
+        FindObjectOfType<InventoryManager>().ToggleInventory();
+        inputActions.Player.Disable();
+        inputActions.UI.Disable();
     }
 
     #endregion

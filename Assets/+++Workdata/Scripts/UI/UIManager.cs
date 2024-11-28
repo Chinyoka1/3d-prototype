@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     private GameController gameController;
     private PlayerController playerController;
     private InventoryManager inventoryManager;
+    [SerializeField] private GameObject deathScreen;
 
     private void Awake()
     {
@@ -21,6 +22,12 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
+        StartCoroutine(DelayEnable());
+    }
+    
+    IEnumerator DelayEnable()
+    {
+        yield return null;
         playerController.inputActions.UI.Pause.performed += TogglePauseMenu;
         playerController.inputActions.UI.Inventory.performed += inventoryManager.ToggleInventory;
     }
@@ -59,4 +66,9 @@ public class UIManager : MonoBehaviour
         Application.Quit();
     }
 
+    public void EnableDeathScreen()
+    {
+        deathScreen.SetActive(true);
+        FindObjectOfType<GameController>().EnterPauseMode();
+    }
 }

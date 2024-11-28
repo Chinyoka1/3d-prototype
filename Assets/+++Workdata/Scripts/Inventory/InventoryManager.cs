@@ -42,6 +42,20 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    public void ToggleInventory()
+    {
+        inventoryContainer.SetActive(!inventoryContainer.activeSelf);
+        itemDisplay.SetActive(false);
+        if (inventoryContainer.activeSelf)
+        {
+            FindObjectOfType<GameController>().EnterPauseMode();
+        }
+        else
+        {
+            FindObjectOfType<GameController>().EnterPlayMode();
+        }
+    }
+
     public Item FindItemInInventory(string id)
     {
         foreach (InventorySlot inventorySlot in inventorySlots)
@@ -158,5 +172,10 @@ public class InventoryManager : MonoBehaviour
     {
         inventoryContainer.SetActive(false);
         itemDisplay.SetActive(false);
+    }
+
+    public bool CheckForItem(string id)
+    {
+        return FindItemInInventory(id) != null;
     }
 }

@@ -13,6 +13,7 @@ public class DataPersistanceManager : MonoBehaviour
     [SerializeField] private string worldDataFileName;
 
     [SerializeField] private bool useEncryption;
+    [SerializeField] private GameObject deathScreen;
     private PlayerData _playerData;
     private WorldData _worldData;
     private List<IDataPersistence> dataPersistenceObjects;
@@ -44,7 +45,7 @@ public class DataPersistanceManager : MonoBehaviour
         _worldData = new WorldData();
         
         FindObjectOfType<GameController>().gameMode = GameController.GameMode.NewGame;
-        SceneManager.LoadScene("FacilityPast");
+        SceneManager.LoadScene("DemoScene");
     }
 
     public void LoadGame()
@@ -63,6 +64,7 @@ public class DataPersistanceManager : MonoBehaviour
         {
             dataPersistenceObject.LoadPlayerData(_playerData);
         }
+        deathScreen.SetActive(false);
     }
 
     public void SaveGame()

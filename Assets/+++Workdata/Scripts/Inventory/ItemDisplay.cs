@@ -35,9 +35,14 @@ public class ItemDisplay : MonoBehaviour
         
         if (itemInfo.types.Contains(Category.ItemType.Consumable))
         {
+            consumeButton.gameObject.SetActive(true);
             consumeButton.onClick.RemoveAllListeners();
             consumeButton.onClick.AddListener(ConsumeItem);
             consumeButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            consumeButton.gameObject.SetActive(false);
         }
     }
     
