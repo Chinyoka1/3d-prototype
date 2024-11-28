@@ -16,9 +16,21 @@ public class HealthBar : MonoBehaviour
         slider = GetComponent<Slider>();
         healthText = GetComponentInChildren<TextMeshProUGUI>(true);
     }
+
+    private void OnEnable()
+    {
+        damageable.onHealthChanged.AddListener(UpdateSliderValue);
+        slider.maxValue = damageable.maxHealth;
+        slider.value = damageable.GetHealth();
+    }
+
     private void UpdateSliderValue(int health)
     {
         slider.value = health;
-        healthText.text = health + " / " + damageable.maxHealth;
+        
+        if (healthText)
+        {
+            healthText.text = health + " / " + damageable.maxHealth;
+        }
     }
 }

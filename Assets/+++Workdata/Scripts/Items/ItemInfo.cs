@@ -11,6 +11,7 @@ public class ItemInfo
     public string description;
     public Sprite icon;
     public int maxStackSize;
+    public Category.ItemType[] types;
     
     // consumeable items
     public int healingPoints;

@@ -5,12 +5,14 @@ using UnityEngine;
 
 public class PlayerAnimationBehavior : MonoBehaviour
 {
-    [SerializeField] private Collider leftHandCollider, leftFootCollider, rightHandCollider, rightFootCollider;
+    [SerializeField] private Collider leftHandCollider, leftFootCollider, rightHandCollider, rightFootCollider, swordCollider;
     private PlayerController _playerController;
+    private Animator anim;
 
     private void Awake()
     {
         _playerController = GetComponentInParent<PlayerController>();
+        anim = GetComponent<Animator>();
     }
 
     public void EndAttack()
@@ -26,5 +28,15 @@ public class PlayerAnimationBehavior : MonoBehaviour
     public void DeactivateRightHandCollider()
     {
         rightHandCollider.enabled = false;
+    }
+
+    public void ActivateSwordCollider()
+    {
+        swordCollider.enabled = true;
+    }
+    
+    public void DeactivateSwordCollider()
+    {
+        swordCollider.enabled = false;
     }
 }

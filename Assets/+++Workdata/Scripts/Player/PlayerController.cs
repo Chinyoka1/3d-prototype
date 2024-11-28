@@ -58,6 +58,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator anim;
 
     [SerializeField] private float coyoteTime;
+    
+    [Header("Interactables")]
+    [SerializeField]private List<Interactable> selectedInteractables;
 
     #endregion
     
@@ -102,8 +105,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
 
     private int upperBody_AnimLayer;
-
-    private Interactable selectedInteractable;
 
     private UIManager uiManager;
     #endregion
@@ -462,40 +463,46 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Interactions
-
-    private void Interact(InputAction.CallbackContext context)
-    {
-        if (selectedInteractable != null)
-        {
-            selectedInteractable.Interact();
-        }
-    }
-
+    
     private void TrySelectInteractable(Collider col)
     {
         Interactable interactable = col.GetComponent<Interactable>();
-        
         if (interactable == null) return;
 
-        if (selectedInteractable != null)
+        if (!selectedInteractables.Contains(interactable))
         {
-            selectedInteractable.Deselect();
+            selectedInteractables.Add(interactable);
+            interactable.Select();
         }
-
-        selectedInteractable = interactable;
-        selectedInteractable.Select();
     }
 
     private void TryDeselectInteractable(Collider col)
     {
         Interactable interactable = col.GetComponent<Interactable>();
-        
         if (interactable == null) return;
 
-        if (interactable == selectedInteractable)
+        if (selectedInteractables.Contains(interactable))
         {
-            selectedInteractable.Deselect();
-            selectedInteractable = null;
+            interactable.Deselect();
+            selectedInteractables.RemoveAt(selectedInteractables.IndexOf(interactable));
+        }
+    }
+
+    private void Interact(InputAction.CallbackContext context)
+    {
+        if (selectedInteractables.Count > 0)
+        {
+            selectedInteractables[0].Interact();
+            StartCoroutine(CheckLastInteraction());
+        }
+    }
+    
+    IEnumerator CheckLastInteraction()
+    {
+        yield return null;
+        if (selectedInteractables.Count > 0 && selectedInteractables[0] == null)
+        {
+            selectedInteractables.RemoveAt(0);
         }
     }
 

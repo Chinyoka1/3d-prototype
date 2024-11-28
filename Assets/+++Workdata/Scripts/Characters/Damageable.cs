@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class Damageable : MonoBehaviour
 {
@@ -10,21 +12,34 @@ public class Damageable : MonoBehaviour
 
     public int maxHealth = 100;
     [SerializeField] private int health = 100;
+    [SerializeField] private string reactOnTag = "Player";
 
     private Animator anim;
+
+    public UnityEvent<int> onHealthChanged;
+
+    private bool isDying;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
     }
 
+    public int GetHealth()
+    {
+        return health;
+    }
+
     private void OnTriggerEnter(Collider col)
     {
-        Attack attack = col.gameObject.GetComponent<Attack>();
-
-        if (attack != null)
+        if (col.gameObject.CompareTag(reactOnTag))
         {
-            TakeDamage(attack);
+            Attack attack = col.gameObject.GetComponent<Attack>();
+
+            if (attack != null)
+            {
+                TakeDamage(attack);
+            }
         }
     }
 
@@ -34,8 +49,36 @@ public class Damageable : MonoBehaviour
         {
             health -= attack.GetFlatDamage();
         }
+        
+        if (health <= 0)
+        {
+            OnDeath();
+        }
 
         PlayAnimation();
+        onHealthChanged.Invoke(health);
+    }
+
+    public void TakeDamage(int damagePoints)
+    {
+        if (health > 0)
+        {
+            health -= damagePoints;
+        }
+
+        if (health <= 0)
+        {
+            OnDeath();
+        }
+
+        PlayAnimation();
+        onHealthChanged.Invoke(health);
+    }
+
+    public void Heal(int healingPoints)
+    {
+        health += healingPoints;
+        onHealthChanged.Invoke(health);
     }
 
     private void PlayAnimation()
@@ -46,10 +89,15 @@ public class Damageable : MonoBehaviour
             {
                 anim.SetTrigger(Hash_Hit);
             }
-            else
-            {
-                anim.SetTrigger(Hash_Death);
-            }
         }
+    }
+
+    private void OnDeath()
+    {
+        if (!isDying)
+        {
+            anim.SetTrigger(Hash_Death);
+        }
+        isDying = true;
     }
 }

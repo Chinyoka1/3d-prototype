@@ -4,6 +4,6 @@
 
 = intro
 Hi!
-Who are you?
+Do you like my farm?
 Goodbye!
 -> END
