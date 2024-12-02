@@ -13,18 +13,13 @@ public class Damageable : MonoBehaviour
     public int maxHealth = 100;
     [SerializeField] private int health = 100;
     [SerializeField] private string reactOnTag = "Player";
-
-    private Animator anim;
+    [SerializeField] private NavMeshPatrol navMeshPatrol;
+    [SerializeField] private Animator anim;
 
     public UnityEvent<int> onHealthChanged;
     public UnityEvent onDeath;
 
     private bool isDying;
-
-    private void Awake()
-    {
-        anim = GetComponent<Animator>();
-    }
 
     public int GetHealth()
     {
@@ -86,6 +81,11 @@ public class Damageable : MonoBehaviour
         {
             onDeath.Invoke();
             anim.SetTrigger(Hash_Death);
+
+            if (navMeshPatrol != null)
+            {
+                navMeshPatrol.StopPatrol();
+            }
         }
         isDying = true;
         anim.SetBool("isDying", true);
