@@ -7,11 +7,15 @@ TagManager:
   - HUD
   - Default Fade
   - Enemy
+  - Grass
+  - Stone
+  - Mud
+  - Wood
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 
