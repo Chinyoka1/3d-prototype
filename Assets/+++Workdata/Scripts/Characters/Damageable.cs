@@ -11,6 +11,7 @@ public class Damageable : MonoBehaviour
     private static readonly int Hash_Death = Animator.StringToHash("Death");
 
     public int maxHealth = 100;
+    public bool isAlive = true;
     [SerializeField] private int health = 100;
     [SerializeField] private string reactOnTag = "Player";
     [SerializeField] private NavMeshPatrol navMeshPatrol;
@@ -89,5 +90,6 @@ public class Damageable : MonoBehaviour
         }
         isDying = true;
         anim.SetBool("isDying", true);
+        isAlive = false;
     }
 }

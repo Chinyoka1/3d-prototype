@@ -6,15 +6,17 @@ public class NPCAnimationBehavior : MonoBehaviour
 {
     [SerializeField] private Collider leftHandCollider, leftFootCollider, rightHandCollider, rightFootCollider, swordCollider;
     private Animator anim;
+    private Enemy _enemyController;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        _enemyController = GetComponentInParent<Enemy>();
     }
 
     public void EndAttack()
     {
-        //_playerController.SetAnimator_UpperBody_LayerWeight(0);
+        _enemyController.EndAttack();
     }
 
     public void ActivateRightHandCollider()
