@@ -10,6 +10,8 @@ public class Interactable : MonoBehaviour
     [SerializeField] private UnityEvent onInteracted;
     [SerializeField] private UnityEvent onSelected;
     [SerializeField] private UnityEvent onDeselected;
+    public UnityEvent onDisabled;
+    public UnityEvent onEnabled;
 
     private void Start()
     {
@@ -21,8 +23,19 @@ public class Interactable : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        onDisabled.Invoke();
+    }
+
+    private void OnEnable()
+    {
+        onEnabled.Invoke();
+    }
+
     public void Interact()
     {
+        if (!enabled) return;
         Interaction interaction = FindActiveInteraction();
 
         if (interaction != null)
@@ -35,6 +48,7 @@ public class Interactable : MonoBehaviour
 
     public void Select()
     {
+        if (!enabled) return;
         onSelected.Invoke();
     }
 

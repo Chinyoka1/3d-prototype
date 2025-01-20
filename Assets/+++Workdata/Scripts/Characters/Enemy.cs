@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     private static readonly int Hash_ActionId = Animator.StringToHash("ActionId");
     private static readonly int Hash_ActionTrigger = Animator.StringToHash("ActionTrigger");
     private int upperBody_AnimLayer;
-    private EnemyFollowTarget _enemyFollowTarget;
+    private NavMeshChase _navMeshChase;
     private bool isAttacking;
     [SerializeField] private float attackDelay = 2;
     private Damageable _damageable;
@@ -21,7 +21,7 @@ public class Enemy : MonoBehaviour
         mainCam = Camera.main;
         worldSpaceCanvas = GetComponentInChildren<Canvas>().gameObject;
         upperBody_AnimLayer = anim.GetLayerIndex("Upper Body");
-        _enemyFollowTarget = GetComponent<EnemyFollowTarget>();
+        _navMeshChase = GetComponent<NavMeshChase>();
         _damageable = GetComponentInChildren<Damageable>();
         _damageable.onDeath.AddListener(OnDeath);
     }
@@ -33,7 +33,7 @@ public class Enemy : MonoBehaviour
 
     private void OnDeath()
     {
-        _enemyFollowTarget.StopMovement();
+        _navMeshChase.StopMovement();
         worldSpaceCanvas.SetActive(false);
     }
     
@@ -56,9 +56,9 @@ public class Enemy : MonoBehaviour
             SetAnimator_UpperBody_LayerWeight(1);
             ActionTrigger(1);
 
-            if (_enemyFollowTarget)
+            if (_navMeshChase)
             {
-                _enemyFollowTarget.StopMovement();
+                _navMeshChase.StopMovement();
             }
         }
     }
@@ -66,9 +66,9 @@ public class Enemy : MonoBehaviour
     public void EndAttack()
     {
         SetAnimator_UpperBody_LayerWeight(0);
-        if (_enemyFollowTarget && _damageable.isAlive)
+        if (_navMeshChase && _damageable.isAlive)
         {
-            _enemyFollowTarget.ResumeMovement();
+            _navMeshChase.ResumeMovement();
         }
 
         StartCoroutine(DelayAttack());

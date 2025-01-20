@@ -471,7 +471,9 @@ public class PlayerController : MonoBehaviour
     private void TrySelectInteractable(Collider col)
     {
         Interactable interactable = col.GetComponent<Interactable>();
-        if (interactable == null) return;
+        if (interactable == null || !interactable.enabled) return;
+        
+        interactable.onDisabled.AddListener(delegate {TryDeselectInteractable(col);});
 
         if (!selectedInteractables.Contains(interactable))
         {
@@ -484,6 +486,8 @@ public class PlayerController : MonoBehaviour
     {
         Interactable interactable = col.GetComponent<Interactable>();
         if (interactable == null) return;
+        
+        interactable.onDisabled.RemoveAllListeners();
 
         if (selectedInteractables.Contains(interactable))
         {
